@@ -12,7 +12,16 @@ const userSchema = new mongoose.Schema({
     buyPrice: Number,
     buyDate: Date
   }],
-  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  role: { type: String, enum: ['user', 'admin', 'founder', 'investor'], default: 'user' },
+  startupName: { type: String, trim: true },
+  investmentBudget: { type: String, trim: true },
+  industry: { type: String, trim: true },
+  stage: { type: String, trim: true },
+  companyInvestments: [{
+    companyName: String,
+    amount: Number,
+    date: { type: Date, default: Date.now }
+  }],
   createdAt: { type: Date, default: Date.now }
 });
 

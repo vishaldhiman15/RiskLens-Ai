@@ -15,7 +15,7 @@ router.post('/signup', upload.single('profileImage'), async (req, res) => {
       return res.status(500).json({ error: 'Server configuration error: JWT_SECRET not set' });
     }
 
-    const { name, email, password } = req.body;
+    const { name, email, password, role, startupName, investmentBudget, industry, stage } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
@@ -32,11 +32,19 @@ router.post('/signup', upload.single('profileImage'), async (req, res) => {
     const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    let userRole = 'user';
+    if (['founder', 'investor'].includes(role)) {
+      userRole = role;
+    }
+
     const user = new User({
       name,
       email,
       password: hashedPassword,
-      profileImage: req.file ? req.file.path : ''
+      profileImage: req.file ? req.file.path : '',
+      role: userRole,
+      ...(userRole === 'founder' && { startupName, industry, stage }),
+      ...(userRole === 'investor' && { investmentBudget })
     });
 
     await user.save();
@@ -103,12 +111,43 @@ router.put('/profile', auth, upload.single('profileImage'), async (req, res) => 
   try {
     const updates = {};
     if (req.body.name) updates.name = req.body.name;
+    if (req.body.startupName) updates.startupName = req.body.startupName;
+    if (req.body.investmentBudget) updates.investmentBudget = req.body.investmentBudget;
+    if (req.body.industry) updates.industry = req.body.industry;
+    if (req.body.stage) updates.stage = req.body.stage;
     if (req.file) updates.profileImage = req.file.path;
 
     const user = await User.findByIdAndUpdate(req.user.id, updates, { new: true }).select('-password');
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.get('/startups', auth, async (req, res) => {
+  try {
+    const founders = await User.find({ role: 'founder' }).select('name email startupName industry stage profileImage');
+    res.json(founders);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error fetching startups' });
+  }
+});
+
+router.post('/investments', auth, async (req, res) => {
+  try {
+    const { companyName, amount } = req.body;
+    if (!companyName || !amount) {
+      return res.status(400).json({ error: 'Company name and amount are required' });
+    }
+    const user = await User.findById(req.user.id);
+    if (!user || user.role !== 'investor') {
+      return res.status(403).json({ error: 'Only investors can add investments' });
+    }
+    user.companyInvestments.push({ companyName, amount });
+    await user.save();
+    res.json(user.companyInvestments);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error adding investment' });
   }
 });
 

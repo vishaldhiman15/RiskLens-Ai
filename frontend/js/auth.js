@@ -24,6 +24,12 @@ if (signupForm) {
     if (selectedRole === 'founder') {
       const startupName = document.getElementById('startup-name').value.trim();
       if (startupName) formData.append('startupName', startupName);
+      
+      const industry = document.getElementById('industry').value.trim();
+      if (industry) formData.append('industry', industry);
+      
+      const stage = document.getElementById('stage').value;
+      if (stage) formData.append('stage', stage);
     } else if (selectedRole === 'investor') {
       const investmentBudget = document.getElementById('investment-budget').value;
       if (investmentBudget) formData.append('investmentBudget', investmentBudget);

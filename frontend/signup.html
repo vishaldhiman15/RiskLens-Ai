@@ -146,7 +146,19 @@
         <!-- Conditional: Founder fields -->
         <div class="form-group" id="founder-fields" style="display:none;">
           <label for="startup-name">Company / Startup Name</label>
-          <input type="text" id="startup-name" class="form-input" placeholder="Acme Corp">
+          <input type="text" id="startup-name" class="form-input" placeholder="Acme Corp" style="margin-bottom: 10px;">
+          
+          <label for="industry">Industry</label>
+          <input type="text" id="industry" class="form-input" placeholder="e.g. Fintech, AI, Healthtech" style="margin-bottom: 10px;">
+          
+          <label for="stage">Company Stage</label>
+          <select id="stage" class="form-input" style="background:#0d1124; margin-bottom: 10px;">
+            <option value="">Select Stage</option>
+            <option value="Idea">Idea</option>
+            <option value="Pre-seed">Pre-seed</option>
+            <option value="Seed">Seed</option>
+            <option value="Series A+">Series A+</option>
+          </select>
         </div>
 
         <!-- Conditional: Investor fields -->
