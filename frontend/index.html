@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="RiskLens-AI — AI-Powered Stock Analysis Platform. Real-time market data, 10-year historical charts, and intelligent Buy/Hold/Wait recommendations.">
+  <title>RiskLens-AI — AI Stock Analysis</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.81/build/spline-viewer.js"></script>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+</head>
+
+<body>
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+
+  <nav class="navbar" id="navbar-landing">
+    <div style="display: flex; align-items: center; gap: 32px;">
+      <a href="/" class="logo">
+        <span class="logo-icon">📈</span>
+        RiskLens-AI
+      </a>
+      <div class="nav-links">
+        <a href="#">Stocks</a>
+        <a href="#">F&O</a>
+        <a href="#">Mutual Funds</a>
+        <a href="#" style="border-left: 1px solid var(--border-glass); padding-left: 16px; margin-left: 8px;">More</a>
+      </div>
+    </div>
+
+    <div class="search-container" style="flex: 1; max-width: 400px; margin: 0 24px;">
+      <span class="search-icon">⌕</span>
+      <input type="text" class="search-input" placeholder="Search stocks..." autocomplete="off" style="padding: 10px 20px 10px 40px; font-size: 14px;">
+    </div>
+
+    <div class="nav-right">
+      <a href="/login.html" class="btn btn-secondary btn-sm">Log In</a>
+      <a href="/signup.html" class="btn btn-primary btn-sm">Get Started</a>
+    </div>
+  </nav>
+
+  <div class="ticker-banner">
+    <div class="ticker-track" id="ticker-track">
+      <div class="ticker-item"><span class="symbol">AAPL</span><span class="t-price">$198.54</span><span
+          class="change positive">+1.23%</span></div>
+      <div class="ticker-item"><span class="symbol">GOOGL</span><span class="t-price">$142.72</span><span
+          class="change positive">+0.87%</span></div>
+      <div class="ticker-item"><span class="symbol">MSFT</span><span class="t-price">$378.91</span><span
+          class="change negative">-0.45%</span></div>
+      <div class="ticker-item"><span class="symbol">TSLA</span><span class="t-price">$248.33</span><span
+          class="change positive">+3.12%</span></div>
+      <div class="ticker-item"><span class="symbol">AMZN</span><span class="t-price">$185.60</span><span
+          class="change positive">+0.96%</span></div>
+      <div class="ticker-item"><span class="symbol">NVDA</span><span class="t-price">$495.22</span><span
+          class="change positive">+2.34%</span></div>
+      <div class="ticker-item"><span class="symbol">META</span><span class="t-price">$356.78</span><span
+          class="change negative">-0.22%</span></div>
+      <div class="ticker-item"><span class="symbol">JPM</span><span class="t-price">$172.14</span><span
+          class="change positive">+0.56%</span></div>
+
+      <div class="ticker-item"><span class="symbol">AAPL</span><span class="t-price">$198.54</span><span
+          class="change positive">+1.23%</span></div>
+      <div class="ticker-item"><span class="symbol">GOOGL</span><span class="t-price">$142.72</span><span
+          class="change positive">+0.87%</span></div>
+      <div class="ticker-item"><span class="symbol">MSFT</span><span class="t-price">$378.91</span><span
+          class="change negative">-0.45%</span></div>
+      <div class="ticker-item"><span class="symbol">TSLA</span><span class="t-price">$248.33</span><span
+          class="change positive">+3.12%</span></div>
+      <div class="ticker-item"><span class="symbol">AMZN</span><span class="t-price">$185.60</span><span
+          class="change positive">+0.96%</span></div>
+      <div class="ticker-item"><span class="symbol">NVDA</span><span class="t-price">$495.22</span><span
+          class="change positive">+2.34%</span></div>
+      <div class="ticker-item"><span class="symbol">META</span><span class="t-price">$356.78</span><span
+          class="change negative">-0.22%</span></div>
+      <div class="ticker-item"><span class="symbol">JPM</span><span class="t-price">$172.14</span><span
+          class="change positive">+0.56%</span></div>
+    </div>
+  </div>
+
+  <section class="spline-hero-landing">
+    <div class="landing-spline-copy">
+      <p class="landing-spline-kicker">Visual Intelligence Layer</p>
+      <h2>Realtime startup signals, powered by an immersive AI canvas.</h2>
+      <p>
+        Founders and investors can explore a living market view while scanning opportunities, growth trends, and risk
+        patterns.
+      </p>
+    </div>
+
+    <div class="spline-frame spline-frame-landing">
+      <spline-viewer url="https://prod.spline.design/AwmSU2oVnlcbpb2v/scene.splinecode"></spline-viewer>
+    </div>
+  </section>
+
+  <section class="hero">
+    <h1>
+      Smart Startup Investing<br>
+      Powered by <span class="highlight">AI Insights</span>
+    </h1>
+    <p class="subtitle">
+      List your startup, get AI-powered analysie,
+      and connect with investors who can discover,
+      evaluate, and invest — all in one platform.
+    </p>
+    <div class="hero-buttons">
+      <a href="/signup.html" class="btn btn-primary btn-lg">🚀 Start Exploring</a>
+      <a href="/login.html" class="btn btn-secondary btn-lg">💼 Investor Login</a>
+    </div>
+
+    <div class="grid-3 mt-4" style="max-width: 800px; width: 100%;">
+      <div class="glass-card text-center">
+        <div
+          style="font-size:36px; font-weight:800; background:var(--gradient-primary); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+          Startup Analytics</div>
+      </div>
+      <div class="glass-card text-center">
+        <div
+          style="font-size:36px; font-weight:800; background:var(--gradient-green); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+          Growth Insights</div>
+      </div>
+      <div class="glass-card text-center">
+        <div
+          style="font-size:36px; font-weight:800; background:linear-gradient(135deg, #f59e0b, #ef4444); background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+          Investment Simulation</div>
+      </div>
+    </div>
+  </section>
+  <section class="features">
+    <h2>Everything You Need to Invest Smart</h2>
+    <div class="features-grid">
+      <div class="feature-card glass-card">
+        <div class="icon">📊</div>
+        <h3>Interactive Startup Dashboard</h3>
+        <p>Visualize startup performance with graphs like revenue growth, burn rate vs revenue, and market potential.
+        </p>
+      </div>
+      <div class="feature-card glass-card">
+        <div class="icon">🧠</div>
+        <h3>AI Analysis Engine</h3>
+        <p>AI analyzes startup data (growth, revenue, market size, burn rate) and gives smart investment suggestions.
+        </p>
+      </div>
+      <div class="feature-card glass-card">
+        <div class="icon">🎯</div>
+        <h3>Investable / Risky Signals</h3>
+        <p>With score and reasoning.</p>
+      </div>
+      <div class="feature-card glass-card">
+        <div class="icon">📈</div>
+        <h3>Growth & Performance Graphs</h3>
+        <p>Auto-generated charts from Revenue trends, Growth comparison, Burn vs profit</p>
+      </div>
+      <div class="feature-card glass-card">
+        <div class="icon">💼</div>
+        <h3>Investor Dashboard</h3>
+        <p>Browse startups, view analytics, and invest virtually.</p>
+      </div>
+      <div class="feature-card glass-card">
+        <div class="icon">🧾</div>
+        <h3>Founder Submission Portal</h3>
+        <p>Startup founders can submit their Revenue, Growth, Market size, Burn rate data and AI instantly evaluates
+          their startup.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer
+    style="text-align:center; padding:40px; color:var(--text-muted); font-size:13px; position:relative; z-index:1; border-top:1px solid var(--border-glass);">
+    <p>RiskLens-AI © 2026 — AI-Powered Stock Analysis. Not financial advice.</p>
+  </footer>
+</body>
+
+</html>

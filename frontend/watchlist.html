@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RiskLens-AI Watchlist — Track and monitor your favourite stocks">
+  <title>Watchlist — RiskLens-AI</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.4/build/spline-viewer.js"></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+</head>
+<body class="dashboard-neo">
+  <div class="bg-animation">
+    <div class="orb"></div><div class="orb"></div><div class="orb"></div>
+  </div>
+
+  <div class="chainx-shell">
+    <aside class="chainx-sidebar">
+      <div class="chainx-brand">
+        <span class="logo-icon">✦</span>
+        <span>RiskLens</span>
+      </div>
+      <nav class="chainx-nav">
+        <a href="/dashboard.html" class="chainx-nav-item"><span>▦</span>Dashboard</a>
+        <a href="/assistant.html" class="chainx-nav-item"><span>🤖</span>AI Assistant</a>
+        <a href="/watchlist.html" class="chainx-nav-item active"><span>☆</span>Watchlist</a>
+        <a href="/news.html" class="chainx-nav-item"><span>📰</span>News</a>
+        <a href="/profile.html" class="chainx-nav-item"><span>⚙</span>Settings</a>
+        <a href="/admin.html" class="chainx-nav-item"><span>🛡️</span>Admin</a>
+        <a href="/pricing.html" class="chainx-nav-item"><span>💎</span>Upgrade</a>
+      </nav>
+      <div class="chainx-upgrade">
+        <h4>Upgrade AI 🧠</h4>
+        <p>Unlock pro forecasting</p>
+        <button class="btn btn-primary btn-sm w-full" onclick="window.location.href='/pricing.html'">Try Now</button>
+      </div>
+    </aside>
+
+    <div class="chainx-main">
+      <header class="chainx-topbar">
+        <div>
+          <h1 class="chainx-title">⭐ Watchlist</h1>
+          <p class="chainx-subtitle">Monitor your favourite stocks with live market data.</p>
+        </div>
+        <div class="chainx-actions">
+          <div class="nav-avatar" onclick="window.location.href='/profile.html'"><span id="nav-initials">U</span></div>
+          <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+        </div>
+      </header>
+
+      <div class="chainx-content">
+
+        <!-- Spline banner -->
+        <div class="glass-card mb-3" style="padding:0; overflow:hidden;">
+          <div style="height:200px; width:100%;">
+            <spline-viewer url="https://prod.spline.design/hcVF832p1SrQFYns/scene.splinecode" style="width:100%; height:100%; display:block;"></spline-viewer>
+          </div>
+        </div>
+
+        <!-- Watchlist Table -->
+        <div class="glass-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-weight:700;">⭐ Your Watchlist</h3>
+            <button class="btn btn-secondary btn-sm" onclick="loadWatchlist()">↻ Refresh</button>
+          </div>
+          <table class="data-table" id="watchlist-table">
+            <thead>
+              <tr>
+                <th>Ticker</th>
+                <th>Price</th>
+                <th>Change</th>
+                <th>52W High</th>
+                <th>52W Low</th>
+                <th>Signal</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="watchlist-tbody">
+              <tr>
+                <td colspan="7" style="text-align:center; padding:40px;">
+                  <div class="loading-spinner"></div>
+                  <p class="loading-text mt-2">Loading watchlist...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div><!-- /chainx-content -->
+    </div><!-- /chainx-main -->
+  </div><!-- /chainx-shell -->
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="js/common.js"></script>
+  <script src="js/watchlist.js"></script>
+</body>
+</html>

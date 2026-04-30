@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RiskLens-AI Admin Portal — Manage users and platform activity">
+  <title>Admin Portal — RiskLens-AI</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body class="dashboard-neo">
+  <div class="bg-animation">
+    <div class="orb"></div><div class="orb"></div><div class="orb"></div>
+  </div>
+
+  <div class="chainx-shell">
+    <aside class="chainx-sidebar">
+      <div class="chainx-brand">
+        <span class="logo-icon">✦</span>
+        <span>RiskLens</span>
+      </div>
+      <nav class="chainx-nav">
+        <a href="/dashboard.html" class="chainx-nav-item"><span>▦</span>Dashboard</a>
+        <a href="/assistant.html" class="chainx-nav-item"><span>🤖</span>AI Assistant</a>
+        <a href="/watchlist.html" class="chainx-nav-item"><span>☆</span>Watchlist</a>
+        <a href="/news.html" class="chainx-nav-item"><span>📰</span>News</a>
+        <a href="/profile.html" class="chainx-nav-item"><span>⚙</span>Settings</a>
+        <a href="/admin.html" class="chainx-nav-item active"><span>🛡️</span>Admin</a>
+        <a href="/pricing.html" class="chainx-nav-item"><span>💎</span>Upgrade</a>
+      </nav>
+      <div class="chainx-upgrade">
+        <h4>Upgrade AI 🧠</h4>
+        <p>Unlock pro features</p>
+        <button class="btn btn-primary btn-sm w-full" onclick="window.location.href='/pricing.html'">Try Now</button>
+      </div>
+    </aside>
+
+    <div class="chainx-main">
+      <header class="chainx-topbar">
+        <div>
+          <h1 class="chainx-title">🛡️ Admin Portal</h1>
+          <p class="chainx-subtitle">Manage users and monitor platform activity.</p>
+        </div>
+        <div class="chainx-actions">
+          <div class="nav-avatar" onclick="window.location.href='/profile.html'"><span id="nav-initials">U</span></div>
+          <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+        </div>
+      </header>
+
+      <div class="chainx-content">
+        <div class="grid-2 mb-3" id="admin-stats"></div>
+
+        <div class="glass-card">
+          <h3 style="font-weight:700; margin-bottom:16px;">Registered Users</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="user-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="js/common.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

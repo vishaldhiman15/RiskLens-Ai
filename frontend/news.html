@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RiskLens-AI News — Real-time market news">
+  <title>News — RiskLens-AI</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
+    
+    .modern-news-layout {
+      background: transparent;
+      color: var(--text-primary);
+      padding: 16px 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    @keyframes textShine {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      100% {
+        background-position: 200% 50%;
+      }
+    }
+
+    .news-top-banner {
+      text-align: center;
+      font-size: 32px;
+      font-family: 'Goldman', sans-serif;
+      font-weight: 700;
+      margin-bottom: 40px;
+      padding: 0;
+      background: transparent;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+
+      /* Premium Interactive Shine Animation */
+      background: linear-gradient(90deg,
+          var(--text-primary) 0%,
+          var(--text-primary) 40%,
+          #e63946 50%,
+          var(--text-primary) 60%,
+          var(--text-primary) 100%);
+      background-size: 200% auto;
+      color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: textShine 4s linear infinite;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      margin-top: 48px;
+    }
+
+    .section-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .section-header a {
+      color: #e63946;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    @keyframes slideUpFade {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .featured-news-wrapper {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 440px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 40px;
+      border: 1px solid var(--border-glass);
+      transition: all 0.4s ease;
+      animation: slideUpFade 0.8s ease forwards;
+      text-decoration: none !important;
+    }
+
+    .featured-news-wrapper:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .featured-news-bg {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-size: cover;
+      background-position: center;
+      z-index: 1;
+      transition: transform 0.8s ease;
+    }
+    
+    .featured-news-wrapper:hover .featured-news-bg {
+      transform: scale(1.05);
+    }
+
+    .featured-news-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(to top, rgba(10, 10, 15, 0.98) 0%, rgba(10, 10, 15, 0.7) 40%, rgba(10, 10, 15, 0.2) 100%);
+      z-index: 2;
+    }
+
+    .featured-news-content {
+      position: relative;
+      z-index: 3;
+      max-width: 800px;
+    }
+    
+    .featured-title {
+      font-family: 'Lora', serif;
+      font-size: 38px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 16px;
+      color: #fff;
+      text-decoration: none !important;
+      display: block;
+      transition: color 0.3s ease;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    
+    .featured-title:hover { color: #fff; }
+
+    .news-source-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .source-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .latest-news-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    .latest-news-card {
+      padding: 20px;
+      border-radius: 12px;
+      background: rgba(15, 20, 25, 0.6);
+      border: 1px solid var(--border-glass);
+      border-left: 3px solid transparent;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      animation: slideUpFade 0.8s ease forwards;
+      opacity: 0;
+      min-height: 200px;
+      text-decoration: none !important;
+    }
+
+    /* Staggered entrance for cards */
+    .latest-news-card:nth-child(1) { animation-delay: 0.1s; }
+    .latest-news-card:nth-child(2) { animation-delay: 0.2s; }
+    .latest-news-card:nth-child(3) { animation-delay: 0.3s; }
+    .latest-news-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .latest-news-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.15);
+      border-left: 3px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .latest-card-title {
+      font-family: 'Lora', serif;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+      text-decoration: none !important;
+      display: block;
+      transition: color 0.3s ease;
+    }
+
+    .latest-card-title:hover {
+      color: #fff;
+    }
+
+    .bulletin-scroll {
+      display: flex;
+      gap: 24px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+    }
+
+    .bulletin-scroll::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .bulletin-scroll::-webkit-scrollbar-thumb {
+      background-color: #ddd;
+      border-radius: 10px;
+    }
+
+    .bulletin-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-width: 90px;
+      cursor: pointer;
+    }
+
+    .bulletin-circle {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 2px solid #e63946;
+      padding: 4px;
+      background-clip: content-box;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 20px;
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+
+    .bulletin-item:hover .bulletin-circle {
+      transform: scale(1.1);
+      border-color: #fff;
+    }
+
+    .bulletin-name {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    @media (max-width: 1200px) {
+      .latest-news-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .featured-news-wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      .latest-news-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .latest-news-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .news-top-banner {
+        font-size: 18px;
+      }
+
+      .featured-title {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+
+<body class="dashboard-neo">
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+
+  <div class="chainx-shell">
+    <aside class="chainx-sidebar">
+      <div class="chainx-brand">
+        <span class="logo-icon">✦</span>
+        <span>RiskLens</span>
+      </div>
+
+      <nav class="chainx-nav">
+        <a href="/dashboard.html" class="chainx-nav-item"><span>▦</span>Dashboard</a>
+        <a href="#" class="chainx-nav-item"><span>◫</span>Market Summary</a>
+        <a href="#" class="chainx-nav-item"><span>⌁</span>Portfolio</a>
+        <a href="#" class="chainx-nav-sub">Stocks</a>
+        <a href="#" class="chainx-nav-sub">Bonds</a>
+        <a href="#" class="chainx-nav-sub">Mutual Funds</a>
+        <a href="#" class="chainx-nav-item"><span>∿</span>Analytics</a>
+        <a href="/watchlist.html" class="chainx-nav-item"><span>☆</span>Watchlist</a>
+        <a href="/news.html" class="chainx-nav-item active"><span>📰</span>News</a>
+        <a href="/profile.html" class="chainx-nav-item"><span>⚙</span>Settings</a>
+        <a href="/admin.html" class="chainx-nav-item"><span>◧</span>Admin</a>
+      </nav>
+
+      <div class="chainx-upgrade">
+        <h4>Upgrade</h4>
+        <p>Unlock all AI features</p>
+        <button class="btn btn-primary btn-sm w-full" onclick="window.location.href='/pricing.html'">Try Pro</button>
+      </div>
+    </aside>
+
+    <div class="chainx-main">
+      <header class="chainx-topbar" style="border-bottom: none;">
+        <div>
+          <h1 class="chainx-title">News</h1>
+        </div>
+
+        <div class="chainx-actions" style="display: flex; align-items: center; gap: 12px; flex-wrap: nowrap;">
+          <div class="search-container chainx-search" style="margin-right: 0; min-width: 250px;">
+            <span class="search-icon">⌕</span>
+            <input type="text" class="search-input" id="news-search" placeholder="Search news..." autocomplete="off">
+          </div>
+          <button class="btn btn-primary btn-sm chainx-btn-primary" id="search-news-btn"
+            style="border-radius: 10px; height: 43px; padding: 0 16px; white-space: nowrap;">Search</button>
+          <div class="nav-avatar" id="nav-avatar" onclick="window.location.href='/profile.html'" title="Profile" style="margin-left: 8px; flex-shrink: 0;">
+            <span id="nav-initials">U</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="chainx-grid" style="display: block;">
+        <section class="chainx-card"
+          style="margin-bottom: 24px; background: transparent; border: none; box-shadow: none; padding: 0; overflow: hidden;">
+
+          <div class="modern-news-layout">
+            <div class="news-top-banner" id="news-topic-title">
+              The Financial Update
+            </div>
+
+            <div id="news-container">
+              <div class="glass-card" style="text-align:center; padding:40px;">
+                <div class="loading-spinner"></div>
+                <p class="loading-text mt-2">Fetching latest news...</p>
+              </div>
+            </div>
+            <div id="pagination-container" style="display: flex; justify-content: center; gap: 12px; margin-top: 32px;">
+            </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="js/common.js"></script>
+  <script src="js/news.js"></script>
+</body>
+
+</html>

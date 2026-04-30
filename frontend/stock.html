@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RiskLens-AI — Deep stock analysis with AI-powered recommendations">
+  <title>Stock Analysis — RiskLens-AI</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.81/build/spline-viewer.js"></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+</head>
+
+<body class="dashboard-neo">
+  <div class="bg-animation">
+    <div class="orb"></div><div class="orb"></div><div class="orb"></div>
+  </div>
+
+  <div class="chainx-shell">
+    <!-- Sidebar -->
+    <aside class="chainx-sidebar">
+      <div class="chainx-brand">
+        <span class="logo-icon">✦</span>
+        <span>RiskLens</span>
+      </div>
+      <nav class="chainx-nav">
+        <a href="/dashboard.html" class="chainx-nav-item"><span>▦</span>Dashboard</a>
+        <a href="/assistant.html" class="chainx-nav-item"><span>🤖</span>AI Assistant</a>
+        <a href="/watchlist.html" class="chainx-nav-item"><span>☆</span>Watchlist</a>
+        <a href="/news.html" class="chainx-nav-item"><span>📰</span>News</a>
+        <a href="/profile.html" class="chainx-nav-item"><span>⚙</span>Settings</a>
+        <a href="/admin.html" class="chainx-nav-item"><span>🛡️</span>Admin</a>
+        <a href="/pricing.html" class="chainx-nav-item"><span>💎</span>Upgrade</a>
+      </nav>
+      <div class="chainx-upgrade">
+        <h4>Upgrade AI 🧠</h4>
+        <p>Unlock pro forecasting</p>
+        <button class="btn btn-primary btn-sm w-full" onclick="window.location.href='/pricing.html'">Try Now</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="chainx-main">
+      <header class="chainx-topbar">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button class="btn btn-secondary btn-sm" onclick="window.location.href='/dashboard.html'">← Back</button>
+          <div>
+            <h1 class="chainx-title">📈 Stock Analysis</h1>
+            <p class="chainx-subtitle">AI-powered deep analysis and price forecasting.</p>
+          </div>
+        </div>
+        <div class="chainx-actions">
+          <div class="nav-avatar" onclick="window.location.href='/profile.html'"><span id="nav-initials">U</span></div>
+          <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+        </div>
+      </header>
+
+      <div class="chainx-content">
+
+        <div class="stock-spline-wrap glass-card mb-3">
+          <spline-viewer url="https://prod.spline.design/WXSbpYDp1kg1EtdE/scene.splinecode"></spline-viewer>
+        </div>
+
+        <div id="stock-header" class="glass-card mb-3" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <h1 id="stock-ticker" style="font-size:36px; font-weight:900;">---</h1>
+              <span id="stock-signal-badge" class="signal-badge hold">LOADING</span>
+            </div>
+            <p id="stock-name" class="text-muted" style="font-size:16px;">Loading stock data...</p>
+          </div>
+          <div style="text-align:right;">
+            <div id="stock-price" style="font-size:40px; font-weight:800;">$---</div>
+            <div id="stock-change" class="change positive" style="font-size:16px;">---</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
+          <button class="btn btn-primary" id="analyze-btn" onclick="runAnalysis()">🧠 Run AI Analysis</button>
+          <button class="btn btn-green" id="watchlist-btn" onclick="toggleWatchlist()">⭐ Add to Watchlist</button>
+        </div>
+
+        <div class="chart-container mb-3 glass-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+            <h3 style="font-weight:700;">Price History</h3>
+            <div class="chart-periods" id="chart-periods">
+              <button onclick="loadHistory('1m', this)">1M</button>
+              <button onclick="loadHistory('3m', this)">3M</button>
+              <button onclick="loadHistory('6m', this)">6M</button>
+              <button onclick="loadHistory('1y', this)" class="active">1Y</button>
+              <button onclick="loadHistory('3y', this)">3Y</button>
+              <button onclick="loadHistory('5y', this)">5Y</button>
+              <button onclick="loadHistory('10y', this)">10Y</button>
+            </div>
+          </div>
+          <div style="position:relative; height:350px; width:100%;">
+            <canvas id="price-chart"></canvas>
+          </div>
+        </div>
+
+        <div id="analysis-section" style="display:none;">
+          <div class="section-title">🧠 AI Analysis Results</div>
+
+          <div class="analysis-panel mb-3">
+            <div class="glass-card" style="text-align:center;">
+              <h3 style="margin-bottom:20px; font-weight:700;">Investment Score</h3>
+              <div class="score-gauge">
+                <svg viewBox="0 0 180 180">
+                  <circle class="track" cx="90" cy="90" r="75"></circle>
+                  <circle class="fill" id="score-circle" cx="90" cy="90" r="75" stroke-dasharray="471" stroke-dashoffset="471"></circle>
+                </svg>
+                <div class="score-value">
+                  <div class="number" id="score-number">--</div>
+                  <div class="label">out of 100</div>
+                </div>
+              </div>
+              <div id="analysis-signal" class="signal-badge hold mt-2" style="font-size:18px; padding:10px 24px;">ANALYZING...</div>
+              <p id="analysis-confidence" class="text-muted text-sm mt-2">Confidence: --%</p>
+            </div>
+
+            <div class="glass-card forecast-card">
+              <h3 style="font-weight:700;">📈 4-5 Month Price Forecast</h3>
+              <div id="forecast-price" class="forecast-price">$---</div>
+              <div id="forecast-range" class="forecast-range">Range: $--- — $---</div>
+              <span id="forecast-trend" class="signal-badge hold mt-2">---</span><br/>
+              <div id="forecast-horizon" class="forecast-horizon">Horizon: 4-5 months</div>
+              <p id="forecast-method" class="text-muted text-sm mt-2">Method: ---</p>
+            </div>
+          </div>
+
+          <div class="grid-2 mb-3">
+            <div class="glass-card">
+              <h3 style="font-weight:700; margin-bottom:16px;">📊 Technical Indicators</h3>
+              <div class="indicator-list" id="indicator-list"></div>
+            </div>
+            <div class="glass-card">
+              <h3 style="font-weight:700; margin-bottom:16px;">💡 Analysis Reasoning</h3>
+              <div class="reasons-list" id="reasons-list"></div>
+            </div>
+          </div>
+
+          <div class="glass-card mb-3">
+            <h3 style="font-weight:700; margin-bottom:12px;">📝 Summary</h3>
+            <p id="analysis-summary" style="font-size:15px; line-height:1.8; color:var(--text-secondary);"></p>
+          </div>
+        </div>
+
+        <div id="analysis-loading" class="loading-overlay" style="display:none; border-radius:var(--radius);">
+          <div class="loading-spinner" style="width:60px; height:60px; border-width:4px;"></div>
+          <p class="loading-text" style="font-size:18px;">🧠 AI is analyzing this stock...</p>
+          <p class="text-muted text-sm">Running technical indicators, scoring, and price forecasting</p>
+        </div>
+
+        <div class="glass-card mb-3">
+          <div id="stock-stats-grid" class="stats-grid"></div>
+        </div>
+
+      </div><!-- /chainx-content -->
+    </div><!-- /chainx-main -->
+  </div><!-- /chainx-shell -->
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="js/common.js"></script>
+  <script src="js/stock.js"></script>
+</body>
+</html>

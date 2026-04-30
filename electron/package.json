@@ -1,0 +1,36 @@
+{
+  "name": "stocksage-desktop",
+  "version": "1.0.0",
+  "description": "StockSage — AI Stock Analysis Desktop App",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --mac dmg",
+    "build:mac": "electron-builder --mac dmg"
+  },
+  "build": {
+    "appId": "com.stocksage.desktop",
+    "productName": "StockSage",
+    "mac": {
+      "target": "dmg",
+      "icon": "icon.icns",
+      "category": "public.app-category.finance"
+    },
+    "dmg": {
+      "title": "StockSage",
+      "contents": [
+        { "x": 130, "y": 220 },
+        { "x": 410, "y": 220, "type": "link", "path": "/Applications" }
+      ]
+    },
+    "directories": {
+      "output": "../dist"
+    }
+  },
+  "dependencies": {
+    "electron": "^28.1.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.9.1"
+  }
+}

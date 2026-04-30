@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RiskLens-AI Profile Settings">
+  <title>Profile — RiskLens-AI</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+</head>
+<body class="dashboard-neo">
+  <div class="bg-animation">
+    <div class="orb"></div><div class="orb"></div><div class="orb"></div>
+  </div>
+
+  <div class="chainx-shell">
+    <aside class="chainx-sidebar">
+      <div class="chainx-brand">
+        <span class="logo-icon">✦</span>
+        <span>RiskLens</span>
+      </div>
+      <nav class="chainx-nav">
+        <a href="/dashboard.html" class="chainx-nav-item"><span>▦</span>Dashboard</a>
+        <a href="/assistant.html" class="chainx-nav-item"><span>🤖</span>AI Assistant</a>
+        <a href="/watchlist.html" class="chainx-nav-item"><span>☆</span>Watchlist</a>
+        <a href="/news.html" class="chainx-nav-item"><span>📰</span>News</a>
+        <a href="/profile.html" class="chainx-nav-item active"><span>⚙</span>Settings</a>
+        <a href="/admin.html" class="chainx-nav-item"><span>🛡️</span>Admin</a>
+        <a href="/pricing.html" class="chainx-nav-item"><span>💎</span>Upgrade</a>
+      </nav>
+      <div class="chainx-upgrade">
+        <h4>Upgrade AI 🧠</h4>
+        <p>Unlock pro forecasting</p>
+        <button class="btn btn-primary btn-sm w-full" onclick="window.location.href='/pricing.html'">Try Now</button>
+      </div>
+    </aside>
+
+    <div class="chainx-main">
+      <header class="chainx-topbar">
+        <div>
+          <h1 class="chainx-title">👤 Profile Settings</h1>
+          <p class="chainx-subtitle">Manage your account, photo, and preferences.</p>
+        </div>
+        <div class="chainx-actions">
+          <div class="nav-avatar" id="nav-initials-btn" onclick="window.location.href='/profile.html'"><span id="nav-initials">U</span></div>
+          <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+        </div>
+      </header>
+
+      <div class="chainx-content">
+        <div class="grid-2">
+          <div class="glass-card" style="text-align:center;">
+            <div id="profile-avatar" style="width:120px;height:120px;border-radius:50%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;margin:0 auto 16px;border:3px solid var(--border-glass);overflow:hidden;">
+              <span id="profile-initials">U</span>
+            </div>
+            <h2 id="profile-name" style="font-weight:800;">Loading...</h2>
+            <p id="profile-email" class="text-muted">---</p>
+            <p id="profile-joined" class="text-muted text-sm mt-1">Member since ---</p>
+          </div>
+
+          <div class="glass-card">
+            <h3 style="font-weight:700; margin-bottom:20px;">Update Profile</h3>
+            <form id="profile-form">
+              <div class="input-group mb-3">
+                <label for="edit-name">Full Name</label>
+                <input type="text" id="edit-name" class="input-field" placeholder="Your name">
+              </div>
+              <div class="input-group mb-3">
+                <label>Profile Photo</label>
+                <div class="file-upload">
+                  <div class="upload-icon">📷</div>
+                  <div class="upload-text">Click to change photo</div>
+                  <input type="file" id="edit-avatar" accept="image/*">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="glass-card mt-3">
+          <h3 style="font-weight:700; margin-bottom:16px;">📊 Account Stats</h3>
+          <div class="grid-3">
+            <div style="text-align:center;">
+              <div id="stat-watchlist" style="font-size:36px; font-weight:800; color:var(--accent-blue);">0</div>
+              <div class="text-muted text-sm">Watchlist Items</div>
+            </div>
+            <div style="text-align:center;">
+              <div id="stat-portfolio" style="font-size:36px; font-weight:800; color:var(--accent-green);">0</div>
+              <div class="text-muted text-sm">Portfolio Positions</div>
+            </div>
+            <div style="text-align:center;">
+              <div id="stat-analyses" style="font-size:36px; font-weight:800; color:var(--accent-purple);">0</div>
+              <div class="text-muted text-sm">Analyses Run</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="js/common.js"></script>
+  <script>
+    requireAuth();
+    loadProfile();
+
+    async function loadProfile() {
+      try {
+        const user = await apiGet('/api/auth/me');
+        document.getElementById('profile-name').textContent = user.name;
+        document.getElementById('profile-email').textContent = user.email;
+        document.getElementById('edit-name').value = user.name;
+        document.getElementById('profile-initials').textContent = user.name.split(' ').map(n=>n[0]).join('').toUpperCase();
+        document.getElementById('nav-initials').textContent = user.name.split(' ').map(n=>n[0]).join('').toUpperCase();
+        if (user.profileImage) {
+          document.getElementById('profile-avatar').innerHTML = `<img src="${user.profileImage}" style="width:100%;height:100%;object-fit:cover;">`;
+        }
+        const joined = new Date(user.createdAt);
+        document.getElementById('profile-joined').textContent = `Member since ${joined.toLocaleDateString('en-US', {month:'long', year:'numeric'})}`;
+        document.getElementById('stat-watchlist').textContent = (user.watchlist || []).length;
+        document.getElementById('stat-portfolio').textContent = (user.portfolio || []).length;
+      } catch(e) { showToast('Failed to load profile', 'error'); }
+    }
+
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append('name', document.getElementById('edit-name').value);
+      const avatar = document.getElementById('edit-avatar').files[0];
+      if (avatar) formData.append('profileImage', avatar);
+      try {
+        const res = await fetch('/api/auth/profile', {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + getToken() },
+          body: formData
+        });
+        if (res.ok) { showToast('Profile updated!', 'success'); loadProfile(); }
+        else showToast('Update failed', 'error');
+      } catch(e) { showToast('Update failed', 'error'); }
+    });
+  </script>
+</body>
+</html>

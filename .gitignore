@@ -1,0 +1,26 @@
+# Node.js
+node_modules/
+package-lock.json
+
+# Python
+python-ai/venv/
+__pycache__/
+*.pyc
+
+# Electron
+electron/node_modules/
+electron/dist/
+electron/out/
+
+# Environment Variables
+.env
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
