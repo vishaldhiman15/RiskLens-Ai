@@ -19,7 +19,6 @@ initDashboardCharts();
 // Load market data on init
 loadMarket('most-active');
 loadQuickWatchlist();
-loadNotifications();
 
 if (currentUser && currentUser.role === 'investor') {
   const navStartups = document.getElementById('nav-startups');
@@ -36,120 +35,15 @@ if (currentUser && currentUser.role === 'investor') {
 }
 
 if (currentUser && currentUser.role === 'founder') {
+  // Show "My Organisation" in sidebar (common.js also handles this)
+  const navFounder = document.getElementById('nav-founder');
+  if (navFounder) navFounder.style.display = 'flex';
+
+  // Show the teaser banner that links to founder.html
   const founderPanel = document.getElementById('founder-panel');
-  if (founderPanel) {
-    founderPanel.style.display = 'block';
-    
-    // Fetch full profile info to get org details
-    apiGet('/api/auth/me').then(user => {
-      document.getElementById('org-name').textContent = user.startupName || 'Not Set';
-      document.getElementById('org-industry').textContent = user.industry || 'Not Set';
-      document.getElementById('org-stage').textContent = user.stage || 'Not Set';
-    }).catch(console.error);
-    
-    initFounderChart();
-  }
+  if (founderPanel) founderPanel.style.display = 'block';
 }
 
-let founderChartObj = null;
-function initFounderChart() {
-  if (typeof Chart === 'undefined') return;
-  const canvas = document.getElementById('founder-chart');
-  if (!canvas) return;
-  
-  const ctx = canvas.getContext('2d');
-  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height || 220);
-  gradient.addColorStop(0, 'rgba(245, 158, 11, 0.4)');
-  gradient.addColorStop(1, 'rgba(245, 158, 11, 0.0)');
-
-  founderChartObj = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      datasets: [{
-        label: 'Active Users',
-        data: [120, 190, 300, 500, 800, 1200],
-        borderColor: '#f59e0b',
-        backgroundColor: gradient,
-        fill: true,
-        tension: 0.4,
-        borderWidth: 2,
-        pointBackgroundColor: '#fcd34d',
-        pointBorderColor: '#f59e0b',
-        pointRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-      }
-    }
-  });
-}
-
-function updateFounderChart() {
-  if (!founderChartObj) return;
-  const type = document.getElementById('founder-graph-type').value;
-  if (type === 'revenue') {
-    founderChartObj.data.datasets[0].label = 'Revenue (MRR)';
-    founderChartObj.data.datasets[0].data = [5000, 7500, 10000, 15000, 22000, 31000];
-  } else {
-    founderChartObj.data.datasets[0].label = 'Active Users';
-    founderChartObj.data.datasets[0].data = [120, 190, 300, 500, 800, 1200];
-  }
-  founderChartObj.update();
-}
-
-// ---- Notifications ----
-async function loadNotifications() {
-  const stream = document.getElementById('updates-stream');
-  if (!stream) return;
-  try {
-    const data = await apiGet('/api/notifications');
-    if (!data || data.length === 0) {
-      stream.innerHTML = '<div class="glass-card" style="padding:15px; text-align:center;"><p class="text-muted">No recent updates.</p></div>';
-      return;
-    }
-    stream.innerHTML = data.map(notif => `
-      <div class="glass-card" style="padding: 15px; border-left: 3px solid var(--accent-amber);">
-        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-          <strong style="color:var(--accent-amber);">${notif.startupName}</strong>
-          <span style="font-size:12px; color:#64748b;">${new Date(notif.createdAt).toLocaleDateString()}</span>
-        </div>
-        <div style="font-size:14px; color:#e2e8f0; line-height:1.4;">${notif.message}</div>
-      </div>
-    `).join('');
-  } catch (err) {
-    stream.innerHTML = '<div class="glass-card" style="padding:15px; text-align:center;"><p class="text-muted">Failed to load updates.</p></div>';
-  }
-}
-
-async function pushNotification() {
-  const msgEl = document.getElementById('notification-msg');
-  const message = msgEl.value.trim();
-  if (!message) return;
-  
-  const btn = msgEl.nextElementSibling;
-  const originalText = btn.textContent;
-  btn.textContent = 'Pushing...';
-  btn.disabled = true;
-  
-  try {
-    await apiPost('/api/notifications', { message });
-    msgEl.value = '';
-    showToast('Notification pushed successfully!');
-    loadNotifications();
-  } catch (err) {
-    showToast('Failed to push notification: ' + err.message, 'error');
-  } finally {
-    btn.textContent = originalText;
-    btn.disabled = false;
-  }
-}
 
 async function loadInvestments() {
   const grid = document.getElementById('investments-grid');
@@ -197,17 +91,17 @@ async function loadStartups() {
   const grid = document.getElementById('startups-grid');
   if (!grid) return;
   try {
-    const data = await apiGet('/api/auth/startups');
+    const data = await apiGet('/api/startups');
     if (!data || data.length === 0) {
       grid.innerHTML = '<div class="empty-state glass-card" style="grid-column:1/-1;"><p>No startups available yet.</p></div>';
       return;
     }
-    grid.innerHTML = data.map(founder => `
-      <div class="stock-card">
-        <div class="ticker" style="font-size: 1.2rem;">${founder.startupName || 'Unknown Startup'}</div>
-        <div class="name" style="margin-top: 5px;">Founder: ${founder.name}</div>
-        <div class="price" style="font-size: 0.9rem; margin-top: 8px;">Industry: ${founder.industry || 'N/A'}</div>
-        <div class="change positive" style="margin-top: 5px;">Stage: ${founder.stage || 'N/A'}</div>
+    grid.innerHTML = data.map(startup => `
+      <div class="stock-card" onclick="window.location.href='/startup.html?id=${startup._id}'" style="cursor: pointer;">
+        <div class="ticker" style="font-size: 1.2rem;">${startup.name || 'Unknown Startup'}</div>
+        <div class="name" style="margin-top: 5px;">Description: ${startup.description || 'N/A'}</div>
+        <div class="price" style="font-size: 0.9rem; margin-top: 8px;">Industry: ${startup.industry || 'N/A'}</div>
+        <div class="change positive" style="margin-top: 5px;">Stage: ${startup.stage || 'N/A'}</div>
       </div>
     `).join('');
   } catch (err) {

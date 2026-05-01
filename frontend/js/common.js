@@ -42,6 +42,17 @@ function requireAuth() {
       navLinks.appendChild(li);
     }
   }
+  // Reveal "My Organisation" link for founders on any page
+  if (user && user.role === 'founder') {
+    const navFounder = document.getElementById('nav-founder');
+    if (navFounder) navFounder.style.display = 'flex';
+  }
+
+  // Reveal "Startups Directory" for investors
+  if (user && user.role === 'investor') {
+    const navStartups = document.getElementById('nav-startups');
+    if (navStartups) navStartups.style.display = 'flex';
+  }
 
   return true;
 }

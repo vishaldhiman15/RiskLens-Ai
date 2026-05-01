@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RiskLens-AI — Founder Hub: Manage your organisation, view investors and analytics">
+  <title>Founder Hub — RiskLens-AI</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💡</text></svg>">
+  <style>
+    /* ─── Stat Cards ─── */
+    .fh-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 28px; }
+    .fh-stat {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 22px 24px;
+      display: flex; flex-direction: column; gap: 6px;
+      position: relative; overflow: hidden;
+    }
+    .fh-stat::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .fh-stat.green::before  { background: linear-gradient(90deg, #10b981, #34d399); }
+    .fh-stat.purple::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+    .fh-stat.amber::before  { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .fh-stat.blue::before   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .fh-stat-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+    .fh-stat-val   { font-size: 30px; font-weight: 800; color: #fff; }
+    .fh-stat-sub   { font-size: 12px; color: #475569; }
+
+    /* ─── Two-col layout ─── */
+    .fh-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 1024px) { .fh-grid { grid-template-columns: 1fr; } }
+    .fh-full { grid-column: 1 / -1; }
+
+    /* ─── Investor table ─── */
+    .inv-table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+    .inv-table th {
+      text-align: left; padding: 10px 14px;
+      font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+      color: #64748b; border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .inv-table td { padding: 14px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+    .inv-table tr:last-child td { border-bottom: none; }
+    .inv-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .inv-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #6d4aff, #4d33db);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .inv-info { display: flex; align-items: center; gap: 12px; }
+    .inv-name { font-weight: 600; color: #f1f5f9; }
+    .inv-email { font-size: 12px; color: #64748b; }
+    .badge-stage {
+      display: inline-block; padding: 4px 12px; border-radius: 99px;
+      font-size: 12px; font-weight: 600;
+      background: rgba(139,92,246,0.15); color: #a78bfa;
+      border: 1px solid rgba(139,92,246,0.25);
+    }
+    .pill-positive { color: #10b981; background: rgba(16,185,129,0.1); border-radius: 99px; padding: 3px 10px; font-size: 13px; font-weight: 700; }
+
+    /* ─── Push notification area ─── */
+    .push-area textarea {
+      width: 100%; min-height: 90px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+      padding: 12px; color: #fff; font-family: inherit; font-size: 14px;
+      resize: vertical; outline: none;
+      transition: border-color .2s;
+    }
+    .push-area textarea:focus { border-color: rgba(109,74,255,.5); }
+    .push-char { font-size: 11px; color: #475569; text-align: right; margin-top: 4px; }
+
+    /* ─── Profile card ─── */
+    .org-profile-card {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 20px; border-radius: 14px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+    }
+    .org-logo {
+      width: 64px; height: 64px; border-radius: 16px;
+      background: linear-gradient(135deg, #6d4aff, #4d33db);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; flex-shrink: 0;
+    }
+    .org-meta h2 { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .org-meta p  { font-size: 13px; color: #64748b; }
+    .org-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .org-tag {
+      font-size: 12px; padding: 4px 12px; border-radius: 99px; font-weight: 600;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: #94a3b8;
+    }
+
+    /* ─── Chart wrapper ─── */
+    .chart-wrap { position: relative; height: 200px; }
+
+    /* ─── Empty state ─── */
+    .fh-empty { text-align: center; padding: 40px; color: #475569; }
+    .fh-empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+    /* ─── Live indicator ─── */
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block; animation: blink 1.2s ease-in-out infinite; margin-right: 6px; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  </style>
+</head>
+<body class="dashboard-neo">
+  <div class="bg-animation">
+    <div class="orb"></div><div class="orb"></div><div class="orb"></div>
+  </div>
+
+  <div class="chainx-shell">
+    <!-- ── Sidebar ── -->
+    <aside class="chainx-sidebar">
+      <div class="chainx-brand">
+        <span class="logo-icon">✦</span><span>RiskLens</span>
+      </div>
+      <nav class="chainx-nav">
+        <a href="/dashboard.html"  class="chainx-nav-item"><span>▦</span>Dashboard</a>
+        <a href="/assistant.html"  class="chainx-nav-item"><span>🤖</span>AI Assistant</a>
+        <a href="/portfolio.html"  class="chainx-nav-item"><span>💼</span>Portfolio</a>
+        <a href="/watchlist.html"  class="chainx-nav-item"><span>☆</span>Watchlist</a>
+        <a href="/news.html"       class="chainx-nav-item"><span>📰</span>News</a>
+        <a href="/founder.html"    class="chainx-nav-item active"><span>💡</span>My Organisation</a>
+        <a href="/profile.html"    class="chainx-nav-item"><span>⚙</span>Settings</a>
+        <a href="/admin.html"      class="chainx-nav-item"><span>🛡️</span>Admin</a>
+      </nav>
+      <div class="chainx-upgrade">
+        <p>Unlock pro features</p>
+        <button class="btn btn-primary btn-sm w-full" onclick="window.location.href='/pricing.html'">Upgrade &amp; Try Now</button>
+      </div>
+    </aside>
+
+    <!-- ── Main ── -->
+    <div class="chainx-main">
+      <header class="chainx-topbar">
+        <div>
+          <h1 class="chainx-title">My Organisation Hub</h1>
+          <p class="chainx-subtitle"><span class="live-dot"></span>Live founder analytics &amp; investor management</p>
+        </div>
+        <div class="chainx-actions">
+          <button class="btn btn-secondary btn-sm" onclick="openEditModal()">✏️ Edit Profile</button>
+          <button class="btn btn-primary btn-sm"   onclick="openPushModal()">📣 Push Update</button>
+          <div class="nav-avatar" id="nav-avatar" onclick="window.location.href='/profile.html'" title="Profile">
+            <span id="nav-initials">U</span>
+          </div>
+        </div>
+      </header>
+
+      <main style="padding: 0 24px 40px;">
+
+        <!-- ── Org profile strip ── -->
+        <div class="org-profile-card" id="org-profile" style="margin-bottom: 24px;">
+          <div class="org-logo">💡</div>
+          <div class="org-meta" style="flex:1;">
+            <h2 id="op-name">Loading…</h2>
+            <p id="op-desc" style="margin-top:4px; max-width:560px;">—</p>
+            <div class="org-tags" id="op-tags"></div>
+          </div>
+          <div style="text-align:right; flex-shrink:0;">
+            <div style="font-size:11px; color:#64748b; text-transform:uppercase; letter-spacing:.06em;">Listed since</div>
+            <div style="font-size:15px; font-weight:700; color:#fff; margin-top:4px;" id="op-since">—</div>
+          </div>
+        </div>
+
+        <!-- ── KPI stats ── -->
+        <div class="fh-stats">
+          <div class="fh-stat green">
+            <div class="fh-stat-label">Total Raised</div>
+            <div class="fh-stat-val" id="kpi-raised">$0</div>
+            <div class="fh-stat-sub" id="kpi-investors">0 investors</div>
+          </div>
+          <div class="fh-stat amber">
+            <div class="fh-stat-label">MRR (Confidential)</div>
+            <div class="fh-stat-val" id="kpi-mrr">$0</div>
+            <div class="fh-stat-sub">Monthly recurring revenue</div>
+          </div>
+          <div class="fh-stat purple">
+            <div class="fh-stat-label">Burn Rate (Confidential)</div>
+            <div class="fh-stat-val" id="kpi-burn">$0</div>
+            <div class="fh-stat-sub">Monthly spend</div>
+          </div>
+          <div class="fh-stat blue">
+            <div class="fh-stat-label">Platform Investors</div>
+            <div class="fh-stat-val" id="kpi-platform-inv">—</div>
+            <div class="fh-stat-sub" id="kpi-platform-total">active on platform</div>
+          </div>
+        </div>
+
+        <!-- ── Two-column grid ── -->
+        <div class="fh-grid">
+
+          <!-- Investor list -->
+          <section class="chainx-card fh-full">
+            <div class="chainx-panel-head">
+              <h3 class="chainx-subhead">Investors in Your Company</h3>
+              <span id="inv-count-badge" class="badge-stage">0 investors</span>
+            </div>
+            <div id="inv-table-wrap">
+              <div class="fh-empty"><div class="fh-empty-icon">📭</div><p>No investors yet. Share your startup page to attract funding!</p></div>
+            </div>
+          </section>
+
+          <!-- Growth chart -->
+          <section class="chainx-card">
+            <div class="chainx-panel-head">
+              <h3 class="chainx-subhead">Growth Metrics</h3>
+              <select id="chart-type" onchange="switchChart()" style="background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:5px 10px; color:#fff; font-size:13px;">
+                <option value="users">Active Users</option>
+                <option value="revenue">Revenue (MRR)</option>
+              </select>
+            </div>
+            <div class="chart-wrap"><canvas id="growth-chart"></canvas></div>
+          </section>
+
+          <!-- Platform reach -->
+          <section class="chainx-card">
+            <div class="chainx-panel-head">
+              <h3 class="chainx-subhead">Platform Reach</h3>
+            </div>
+            <div class="chart-wrap"><canvas id="reach-chart"></canvas></div>
+          </section>
+
+          <!-- Push Notification history -->
+          <section class="chainx-card fh-full">
+            <div class="chainx-panel-head">
+              <h3 class="chainx-subhead">Recent Announcements</h3>
+              <button class="btn btn-sm btn-primary" onclick="openPushModal()">+ New Update</button>
+            </div>
+            <div id="notif-list" style="display:flex; flex-direction:column; gap:10px; margin-top:14px; max-height:340px; overflow-y:auto;">
+              <div class="fh-empty"><div class="fh-empty-icon">📡</div><p>No announcements yet.</p></div>
+            </div>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ── Edit Startup Modal ── -->
+  <div class="modal" id="edit-modal">
+    <div class="modal-content" style="width: 480px; max-height: 90vh; overflow-y: auto;">
+      <h3 style="margin-bottom: 20px; color: #fff; font-size: 20px;">✏️ Edit Startup Profile</h3>
+      <form id="edit-form">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+          <div>
+            <label style="font-size:12px; color:#64748b; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:6px;">Startup Name</label>
+            <input type="text" id="ef-name" class="form-input" placeholder="Acme Corp" required style="width:100%; padding:11px 14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:10px; color:#fff; font-size:14px;">
+          </div>
+          <div>
+            <label style="font-size:12px; color:#64748b; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:6px;">Industry</label>
+            <input type="text" id="ef-industry" class="form-input" placeholder="Fintech" style="width:100%; padding:11px 14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:10px; color:#fff; font-size:14px;">
+          </div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="font-size:12px; color:#64748b; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:6px;">Stage</label>
+          <select id="ef-stage" style="width:100%; padding:11px 14px; background:#0d1124; border:1px solid rgba(255,255,255,.1); border-radius:10px; color:#fff; font-size:14px;">
+            <option value="">Select Stage</option>
+            <option value="Idea">Idea</option>
+            <option value="Pre-seed">Pre-seed</option>
+            <option value="Seed">Seed</option>
+            <option value="Series A+">Series A+</option>
+          </select>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="font-size:12px; color:#64748b; text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:6px;">Description</label>
+          <textarea id="ef-desc" style="width:100%; min-height:80px; padding:11px 14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:10px; color:#fff; font-size:14px; resize:vertical;" placeholder="What does your company do?"></textarea>
+        </div>
+        <div style="background:rgba(251,191,36,.05); border:1px solid rgba(251,191,36,.15); border-radius:12px; padding:16px; margin-bottom:14px;">
+          <p style="font-size:13px; color:#fbbf24; font-weight:700; margin-bottom:12px;">🔒 Confidential — Only visible to you</p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <div>
+              <label style="font-size:12px; color:#64748b; display:block; margin-bottom:6px;">MRR ($)</label>
+              <input type="number" id="ef-mrr" placeholder="5000" style="width:100%; padding:11px 14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:10px; color:#fff; font-size:14px;">
+            </div>
+            <div>
+              <label style="font-size:12px; color:#64748b; display:block; margin-bottom:6px;">Burn Rate ($)</label>
+              <input type="number" id="ef-burn" placeholder="2000" style="width:100%; padding:11px 14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); border-radius:10px; color:#fff; font-size:14px;">
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:6px;">
+          <button type="button" class="btn btn-secondary w-full" onclick="closeModal('edit-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary w-full">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Push Notification Modal ── -->
+  <div class="modal" id="push-modal">
+    <div class="modal-content" style="width: 440px;">
+      <h3 style="margin-bottom: 6px; color: #fff; font-size: 20px;">📣 Push Update to Investors</h3>
+      <p style="font-size:13px; color:#64748b; margin-bottom:20px;">All investors on the platform will see this announcement.</p>
+      <div class="push-area">
+        <textarea id="push-msg" placeholder="We just hit 1,000 users! Announcing our Series A round…" maxlength="400" oninput="document.getElementById('push-char').textContent=this.value.length+'/400'"></textarea>
+        <div class="push-char" id="push-char">0/400</div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button type="button" class="btn btn-secondary w-full" onclick="closeModal('push-modal')">Cancel</button>
+        <button type="button" class="btn btn-primary w-full" onclick="sendPush()">Push Update</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+  <script src="js/common.js"></script>
+  <script src="js/founder.js"></script>
+</body>
+</html>

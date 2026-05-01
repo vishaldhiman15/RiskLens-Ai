@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Notification = require('../models/Notification');
 const User = require('../models/User');
+const Startup = require('../models/Startup');
 const auth = require('../middleware/auth');
 
 // Get all notifications
@@ -27,9 +28,13 @@ router.post('/', auth, async (req, res) => {
       return res.status(403).json({ error: 'Only founders can post notifications' });
     }
 
+    // Pull startup name from the Startup model so it's always current
+    const startup = await Startup.findOne({ founderId: req.user.id });
+    const startupName = startup?.name || user.startupName || 'Unknown Startup';
+
     const notification = new Notification({
       founderId: user._id,
-      startupName: user.startupName || 'Unknown Startup',
+      startupName,
       message
     });
 

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RiskLens-AI Startup Overview">
+  <title>Startup Overview — RiskLens-AI</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💡</text></svg>">
+</head>
+
+<body class="dashboard-neo">
+  <div class="bg-animation">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+
+  <div class="chainx-shell">
+    <aside class="chainx-sidebar">
+      <div class="chainx-brand">
+        <span class="logo-icon">✦</span>
+        <span>RiskLens</span>
+      </div>
+      <nav class="chainx-nav">
+        <a href="/dashboard.html" class="chainx-nav-item"><span>▦</span>Dashboard</a>
+        <a href="/assistant.html" class="chainx-nav-item"><span>🤖</span>AI Assistant</a>
+        <a href="/portfolio.html" class="chainx-nav-item"><span>💼</span>Portfolio</a>
+        <a href="/watchlist.html" class="chainx-nav-item"><span>☆</span>Watchlist</a>
+        <a href="/news.html" class="chainx-nav-item"><span>📰</span>News</a>
+        <a href="/profile.html" class="chainx-nav-item"><span>⚙</span>Settings</a>
+        <a href="/admin.html" class="chainx-nav-item"><span>🛡️</span>Admin</a>
+      </nav>
+      <div class="chainx-upgrade">
+        <p>Unlock pro forecasting</p>
+        <button class="btn btn-primary btn-sm w-full" onclick="window.location.href='/pricing.html'">Upgrade & Try Now</button>
+      </div>
+    </aside>
+
+    <div class="chainx-main">
+      <header class="chainx-topbar" style="border-bottom: none;">
+        <div>
+          <h1 class="chainx-title" id="startup-title">Loading...</h1>
+          <p class="chainx-subtitle" id="startup-industry">Industry: Loading...</p>
+        </div>
+        <div class="chainx-actions">
+          <div class="search-container chainx-search">
+            <span class="search-icon">⌕</span>
+            <input type="text" class="search-input" id="stock-search" placeholder="Search startup or stock..." autocomplete="off">
+            <div class="search-results" id="search-results"></div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-invest" onclick="investInStartup()">Invest</button>
+        </div>
+      </header>
+
+      <main class="chainx-grid" style="grid-template-columns: 2fr 1fr; margin-top: 20px;">
+        <!-- Overview Card -->
+        <section class="chainx-card" style="padding: 30px;">
+          <h2 style="font-size: 24px; color: #fff; margin-bottom: 20px;">Company Overview</h2>
+          <div class="glass-card" style="padding: 24px; line-height: 1.6; color: #e2e8f0; font-size: 16px;" id="startup-description">
+            Loading description...
+          </div>
+
+          <h3 style="font-size: 20px; color: #fff; margin-top: 30px; margin-bottom: 15px;">Key Public Metrics</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="glass-card" style="padding: 20px;">
+              <div style="color: #94a3b8; font-size: 13px; text-transform: uppercase;">Company Stage</div>
+              <div style="font-size: 24px; font-weight: 800; color: #fff; margin-top: 5px;" id="startup-stage">Loading...</div>
+            </div>
+            <div class="glass-card" style="padding: 20px;">
+              <div style="color: #94a3b8; font-size: 13px; text-transform: uppercase;">Funding Goal</div>
+              <div style="font-size: 24px; font-weight: 800; color: #10b981; margin-top: 5px;" id="startup-funding">TBD</div>
+            </div>
+            <div class="glass-card" style="padding: 20px;">
+              <div style="color: #94a3b8; font-size: 13px; text-transform: uppercase;">Estimated Valuation</div>
+              <div style="font-size: 24px; font-weight: 800; color: #8b5cf6; margin-top: 5px;" id="startup-valuation">TBD</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Sidebar Info -->
+        <section style="display: flex; flex-direction: column; gap: 20px;">
+          <div class="chainx-card">
+            <h3 class="chainx-subhead">AI Risk Analysis</h3>
+            <div class="glass-card" style="padding: 20px; text-align: center;">
+              <div style="font-size: 48px; font-weight: 800; color: #fbbf24; margin-bottom: 10px;">85/100</div>
+              <div style="color: #94a3b8; font-size: 14px;">Overall Investability Score</div>
+              <p style="margin-top: 15px; font-size: 13px; color: #cbd5e1; text-align: left;">
+                This score is based on public stage data and industry trends. The startup shows strong early signals.
+              </p>
+            </div>
+          </div>
+
+          <div class="chainx-card">
+            <h3 class="chainx-subhead">Action</h3>
+            <div class="glass-card" style="padding: 20px;">
+              <p style="color: #cbd5e1; font-size: 14px; margin-bottom: 15px;">Add to your investments or watchlist to keep track of their growth.</p>
+              <button class="btn btn-secondary w-full" style="margin-bottom: 10px;">Add to Watchlist</button>
+              <button class="btn btn-primary w-full" onclick="investInStartup()">Log Investment</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="js/common.js"></script>
+  <script src="js/startup.js"></script>
+</body>
+
+</html>

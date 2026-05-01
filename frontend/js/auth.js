@@ -30,6 +30,15 @@ if (signupForm) {
       
       const stage = document.getElementById('stage').value;
       if (stage) formData.append('stage', stage);
+
+      const description = document.getElementById('description').value.trim();
+      if (description) formData.append('description', description);
+
+      const mrr = document.getElementById('mrr').value;
+      if (mrr) formData.append('mrr', mrr);
+
+      const burnRate = document.getElementById('burn-rate').value;
+      if (burnRate) formData.append('burnRate', burnRate);
     } else if (selectedRole === 'investor') {
       const investmentBudget = document.getElementById('investment-budget').value;
       if (investmentBudget) formData.append('investmentBudget', investmentBudget);

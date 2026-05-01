@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Startup = require('../models/Startup');
 const auth = require('../middleware/auth');
 const { upload } = require('../config/cloudinary');
 require('dotenv').config({ path: __dirname + '/../.env' });
@@ -15,7 +16,7 @@ router.post('/signup', upload.single('profileImage'), async (req, res) => {
       return res.status(500).json({ error: 'Server configuration error: JWT_SECRET not set' });
     }
 
-    const { name, email, password, role, startupName, investmentBudget, industry, stage } = req.body;
+    const { name, email, password, role, startupName, investmentBudget, industry, stage, description, mrr, burnRate } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
@@ -48,6 +49,21 @@ router.post('/signup', upload.single('profileImage'), async (req, res) => {
     });
 
     await user.save();
+
+    if (userRole === 'founder' && startupName) {
+      const startup = new Startup({
+        founderId: user._id,
+        name: startupName,
+        industry,
+        stage,
+        description: description || '',
+        confidentialMetrics: {
+          monthlyRecurringRevenue: Number(mrr) || 0,
+          burnRate: Number(burnRate) || 0
+        }
+      });
+      await startup.save();
+    }
 
     const token = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 

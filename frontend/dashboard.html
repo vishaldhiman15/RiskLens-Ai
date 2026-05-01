@@ -36,6 +36,7 @@
         <a href="/portfolio.html" class="chainx-nav-item"><span>💼</span>Portfolio</a>
         <a href="/watchlist.html" class="chainx-nav-item"><span>☆</span>Watchlist</a>
         <a href="#" class="chainx-nav-item" id="nav-startups" style="display:none;"><span>🚀</span>Startups Directory</a>
+        <a href="/founder.html" class="chainx-nav-item" id="nav-founder" style="display:none;"><span>💡</span>My Organisation</a>
         <a href="/news.html" class="chainx-nav-item"><span>📰</span>News</a>
         <a href="/profile.html" class="chainx-nav-item"><span>⚙</span>Settings</a>
         <a href="/admin.html" class="chainx-nav-item"><span>◧</span>Admin</a>
@@ -134,45 +135,15 @@
           </div>
         </section>
 
-        <section class="chainx-card chainx-founder-panel" id="founder-panel" style="display:none; grid-column: 1 / -1;">
-          <div class="chainx-panel-head">
-            <h3 class="chainx-subhead">My Organization Dashboard</h3>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-            <!-- Left: Info & Push -->
-            <div class="glass-card" style="padding: 20px;">
-              <h4 style="margin-bottom: 15px; color: var(--accent-amber);">Company Data</h4>
-              <p><strong>Startup:</strong> <span id="org-name"></span></p>
-              <p><strong>Industry:</strong> <span id="org-industry"></span></p>
-              <p><strong>Stage:</strong> <span id="org-stage"></span></p>
-              <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
-              <h4 style="margin-bottom: 10px;">Push Notification to Clients</h4>
-              <textarea id="notification-msg" class="search-input" rows="3" placeholder="Announce a new update or milestone..." style="width:100%; margin-bottom:10px; background: rgba(255,255,255,0.04); border-radius:8px; padding:10px; color:#fff; border:1px solid rgba(255,255,255,0.1);"></textarea>
-              <button class="btn btn-primary btn-sm w-full" onclick="pushNotification()">Push Update</button>
+        <!-- Founder teaser card — links to the dedicated Founder Hub page -->
+        <section class="chainx-card" id="founder-panel" style="display:none; grid-column: 1 / -1; background: linear-gradient(135deg, rgba(109,74,255,0.12), rgba(16,185,129,0.07)); border-color: rgba(109,74,255,0.25);">
+          <div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
+            <div style="font-size:48px;">💡</div>
+            <div style="flex:1;">
+              <h3 style="font-size:20px; font-weight:800; color:#fff; margin-bottom:6px;">Your Organisation Hub is ready</h3>
+              <p style="color:#94a3b8; font-size:14px; margin-bottom:14px;">View investor analytics, live growth metrics, confidential financials, and push updates — all in one place.</p>
+              <a href="/founder.html" class="btn btn-primary btn-sm">Open My Organisation Hub →</a>
             </div>
-            
-            <!-- Right: Graph -->
-            <div class="glass-card" style="padding: 20px;">
-              <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                <h4 style="color: var(--accent-amber);">Growth Metrics</h4>
-                <select id="founder-graph-type" class="search-input" style="background: rgba(255,255,255,0.04); border-radius:8px; padding:4px 8px; color:#fff; border:1px solid rgba(255,255,255,0.1);" onchange="updateFounderChart()">
-                  <option value="users">Active Users</option>
-                  <option value="revenue">Revenue (MRR)</option>
-                </select>
-              </div>
-              <div style="position: relative; height: 220px; width: 100%;">
-                <canvas id="founder-chart"></canvas>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="chainx-card chainx-updates-panel" id="updates-panel">
-          <div class="chainx-panel-head">
-            <h3 class="chainx-subhead">Platform & Startup Updates</h3>
-          </div>
-          <div id="updates-stream" style="display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 5px;">
-            <div class="loading-spinner"></div>
           </div>
         </section>
 
@@ -190,6 +161,8 @@
   </div>
 
   <div class="toast-container" id="toast-container"></div>
+
+
 
   <script src="js/common.js"></script>
   <script src="js/dashboard.js"></script>
