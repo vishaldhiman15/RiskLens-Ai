@@ -81,110 +81,78 @@ async function loadHistory(period, btnEl) {
 }
 
 function renderChart(history, period) {
-  const canvas = document.getElementById('price-chart');
-  const ctx = canvas.getContext('2d');
-
-  if (priceChart) priceChart.destroy();
-
-  const labels = history.map(h => new Date(h.date));
-  const prices = history.map(h => h.close);
-
-  // Determine trend color
-  const isPositive = prices.length > 1 && prices[prices.length - 1] >= prices[0];
-  const themeColor = isPositive ? '#10b981' : '#ef4444';
-  const themeGlow = isPositive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
-
-  // Gradient fill (subtle Google look)
-  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-  gradient.addColorStop(0, themeGlow);
-  gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
-
-  const datasets = [
-    {
-      label: 'Price',
-      data: prices,
-      borderColor: themeColor,
-      backgroundColor: gradient,
-      fill: true,
-      borderWidth: 1.8,
-      pointRadius: 0,
-      pointHoverRadius: 4,
-      pointHoverBackgroundColor: themeColor,
-      pointHoverBorderColor: '#fff',
-      pointHoverBorderWidth: 2,
-      pointHitRadius: 20,
-      tension: 0.4, // Smoother line
-    }
-  ];
-
-  // Add Previous Close baseline if it exists (Google Finance style)
-  if (window.currentPreviousClose) {
-    const baselineData = new Array(prices.length).fill(window.currentPreviousClose);
-    datasets.push({
-      label: 'Previous Close',
-      data: baselineData,
-      borderColor: 'rgba(255, 255, 255, 0.15)',
-      borderWidth: 1,
-      borderDash: [5, 5],
-      pointRadius: 0,
-      fill: false,
-      order: 2
-    });
+  if (priceChart) {
+    priceChart.destroy();
+    priceChart = null;
   }
 
-  priceChart = new Chart(ctx, {
-    type: 'line',
-    data: { labels, datasets },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      },
-      plugins: {
-        legend: { display: false }, // Cleaner look
-        tooltip: {
-          backgroundColor: 'rgba(17, 24, 39, 0.95)',
-          titleColor: '#f1f5f9',
-          bodyColor: '#94a3b8',
-          borderColor: 'rgba(255,255,255,0.1)',
-          borderWidth: 1,
-          padding: 12,
-          displayColors: false,
-          callbacks: {
-            label: (ctx) => `Price: $${ctx.raw.toLocaleString(undefined, {minimumFractionDigits: 2})}`
-          }
-        }
-      },
-      scales: {
-        x: {
-          type: 'time',
-          grid: { display: false },
-          ticks: {
-            color: '#64748b',
-            maxRotation: 0,
-            autoSkip: true,
-            maxTicksLimit: 7,
-            font: { family: 'Inter', size: 10 }
-          }
-        },
-        y: {
-          position: 'right', // Google Finance style
-          grace: '10%', // Add breathing room so spikes don't hit the ceiling
-          grid: {
-            color: 'rgba(255, 255, 255, 0.03)',
-            drawBorder: false
-          },
-          ticks: {
-            color: '#64748b',
-            font: { family: 'Inter', size: 10 },
-            callback: val => '$' + val.toLocaleString()
-          }
-        }
-      }
+  const candleData = history.map(h => {
+    if (h.open !== null && h.high !== null && h.low !== null) {
+      return {
+        x: new Date(h.date),
+        y: [h.open, h.high, h.low, h.close]
+      };
+    } else {
+      return {
+        x: new Date(h.date),
+        y: [h.close, h.close, h.close, h.close]
+      };
     }
   });
+
+  const options = {
+    series: [{
+      name: 'Price',
+      data: candleData
+    }],
+    chart: {
+      type: 'candlestick',
+      height: 350,
+      background: 'transparent',
+      toolbar: { show: false },
+      animations: { enabled: false }
+    },
+    theme: { mode: 'dark' },
+    plotOptions: {
+      candlestick: {
+        colors: {
+          upward: '#10b981',
+          downward: '#ef4444'
+        },
+        wick: {
+          useFillColor: true
+        }
+      }
+    },
+    xaxis: {
+      type: 'datetime',
+      labels: {
+        style: { colors: '#64748b', fontFamily: 'Inter' }
+      },
+      axisBorder: { show: false },
+      axisTicks: { show: false }
+    },
+    yaxis: {
+      opposite: true,
+      tooltip: { enabled: true },
+      labels: {
+        style: { colors: '#64748b', fontFamily: 'Inter' },
+        formatter: (val) => { return "$" + val.toFixed(2); }
+      }
+    },
+    grid: {
+      borderColor: 'rgba(255, 255, 255, 0.05)',
+      strokeDashArray: 4,
+    },
+    tooltip: {
+      theme: 'dark'
+    }
+  };
+
+  const chartElement = document.querySelector("#price-chart");
+  chartElement.innerHTML = '';
+  priceChart = new ApexCharts(chartElement, options);
+  priceChart.render();
 }
 
 function calculateSMA(data, period) {

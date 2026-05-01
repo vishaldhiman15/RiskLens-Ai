@@ -58,23 +58,58 @@ const doSearch = debounce(async (query) => {
     searchResults.classList.remove('active');
     return;
   }
+
   try {
     const data = await apiGet(`/api/stocks/search?q=${encodeURIComponent(query)}`);
     const results = data.quotes || [];
-    if (results.length === 0) {
+
+    // Search Mongo startups
+    let startupMatches = [];
+    try {
+        const startupsData = await apiGet('/api/startups');
+          
+        const lowerQ = query.toLowerCase();
+        startupMatches = startupsData.filter(s => 
+          (s.name && s.name.toLowerCase().includes(lowerQ)) || 
+          (s.description && s.description.toLowerCase().includes(lowerQ))
+        );
+    } catch(e) {
+      console.error("Failed to load startups for search", e);
+    }
+
+    const combinedHtml = [];
+    
+    startupMatches.slice(0, 3).forEach(s => {
+      combinedHtml.push(`
+        <div class="search-result-item" onclick="window.location.href='/startup.html?id=${s._id}'" style="border-left: 3px solid #10b981; background: rgba(16, 185, 129, 0.05);">
+          <div>
+            <div style="font-weight:700; color: #10b981; display: flex; align-items: center; gap: 6px;">${s.name} <span style="font-size: 0.6rem; background: rgba(16,185,129,0.2); color: #34d399; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.3); text-transform: uppercase; font-weight: 800;">STARTUP</span></div>
+            <div class="text-muted text-sm" style="margin-top: 3px;">${s.industry || 'Private Company'}</div>
+          </div>
+          <div class="text-muted text-sm">${s.stage || ''}</div>
+        </div>
+      `);
+    });
+
+    results.slice(0, 8).forEach(r => {
+      combinedHtml.push(`
+        <div class="search-result-item" onclick="window.location.href='/stock.html?ticker=${encodeURIComponent(r.symbol)}'">
+          <div>
+            <div style="font-weight:700;">${r.symbol}</div>
+            <div class="text-muted text-sm">${r.shortname || r.longname || ''}</div>
+          </div>
+          <div class="text-muted text-sm">${r.exchDisp || r.exchange || ''}</div>
+        </div>
+      `);
+    });
+    
+    if (combinedHtml.length === 0) {
       searchResults.innerHTML = `<div class="search-result-item"><span class="text-muted">No results found</span></div>`;
       searchResults.classList.add('active');
       return;
     }
-    searchResults.innerHTML = results.slice(0, 8).map(r => `
-      <div class="search-result-item" onclick="window.location.href='/stock.html?ticker=${encodeURIComponent(r.symbol)}'">
-        <div>
-          <div style="font-weight:700;">${r.symbol}</div>
-          <div class="text-muted text-sm">${r.shortname || r.longname || ''}</div>
-        </div>
-        <div class="text-muted text-sm">${r.exchDisp || r.exchange || ''}</div>
-      </div>
-    `).join('');
+
+    searchResults.innerHTML = combinedHtml.join('');
     searchResults.classList.add('active');
   } catch (err) {
     searchResults.innerHTML = `<div class="search-result-item"><span class="text-muted">Search failed</span></div>`;

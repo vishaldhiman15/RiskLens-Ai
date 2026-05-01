@@ -146,11 +146,17 @@ async function getYFHistory(ticker, period = '1y') {
   if (!result) return null;
 
   const timestamps = result.timestamp || [];
+  const opens = result.indicators?.quote?.[0]?.open || [];
+  const highs = result.indicators?.quote?.[0]?.high || [];
+  const lows = result.indicators?.quote?.[0]?.low || [];
   const closes = result.indicators?.quote?.[0]?.close || [];
   const volumes = result.indicators?.quote?.[0]?.volume || [];
 
   const data = timestamps.map((ts, i) => ({
     date: new Date(ts * 1000).toISOString().split('T')[0],
+    open: opens[i] || null,
+    high: highs[i] || null,
+    low: lows[i] || null,
     close: closes[i] || null,
     volume: volumes[i] || 0
   })).filter(d => d.close !== null);

@@ -112,8 +112,20 @@
         </section>
 
         <section class="chainx-card chainx-startups-panel" id="startups-panel" style="display:none;">
-          <div class="chainx-panel-head">
-            <h3 class="chainx-subhead">Startups Directory</h3>
+          <div class="chainx-panel-head" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <h3 class="chainx-subhead" style="margin: 0;">Startups Directory</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; flex: 1; justify-content: flex-end;">
+              <div class="search-container chainx-search" style="margin: 0; min-width: 200px; max-width: 300px;">
+                <span class="search-icon">⌕</span>
+                <input type="text" class="search-input" id="startup-directory-search" placeholder="Search companies..." autocomplete="off">
+              </div>
+              <select id="startup-industry-filter" style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 8px 12px; border-radius: 8px; outline: none; font-size: 14px; cursor: pointer; transition: all 0.3s ease;">
+                <option value="">All Industries</option>
+              </select>
+              <select id="startup-stage-filter" style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 8px 12px; border-radius: 8px; outline: none; font-size: 14px; cursor: pointer; transition: all 0.3s ease;">
+                <option value="">All Stages</option>
+              </select>
+            </div>
           </div>
           <div id="startups-grid" class="stock-grid chainx-stock-grid">
             <div class="glass-card" style="text-align:center; padding:40px; grid-column: 1 / -1;">

@@ -56,10 +56,21 @@ async function loadInvestments() {
       return;
     }
     grid.innerHTML = investments.map(inv => `
-      <div class="stock-card">
-        <div class="ticker">${inv.companyName}</div>
-        <div class="price" style="margin-top: 5px;">${formatCurrency(inv.amount)}</div>
-        <div class="change positive" style="margin-top: 5px;">Invested on: ${new Date(inv.date).toLocaleDateString()}</div>
+      <div class="glass-card" style="padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s;">
+        <div>
+          <div style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Investment</div>
+          <div class="ticker" style="font-size: 1.4rem; font-weight: 800; color: #fff;">${inv.companyName}</div>
+        </div>
+        <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 2px;">Amount</div>
+            <div class="price" style="font-size: 1.2rem; color: #34d399; font-weight: 700;">${formatCurrency(inv.amount)}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 2px;">Date</div>
+            <div style="font-size: 0.9rem; color: #e2e8f0;">${new Date(inv.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+          </div>
+        </div>
       </div>
     `).join('');
   } catch (err) {
@@ -87,27 +98,86 @@ async function addInvestmentPrompt() {
 }
 
 // ---- Startups (for Investors) ----
+let allStartups = [];
+
 async function loadStartups() {
   const grid = document.getElementById('startups-grid');
   if (!grid) return;
   try {
     const data = await apiGet('/api/startups');
-    if (!data || data.length === 0) {
-      grid.innerHTML = '<div class="empty-state glass-card" style="grid-column:1/-1;"><p>No startups available yet.</p></div>';
-      return;
+    allStartups = data || [];
+    
+    // Populate filter dropdowns
+    const industries = [...new Set(allStartups.map(s => s.industry).filter(Boolean))];
+    const stages = [...new Set(allStartups.map(s => s.stage).filter(Boolean))];
+    
+    const indFilter = document.getElementById('startup-industry-filter');
+    const stageFilter = document.getElementById('startup-stage-filter');
+    
+    if (indFilter) {
+      indFilter.innerHTML = '<option value="">All Industries</option>' + industries.map(i => `<option value="${i}">${i}</option>`).join('');
     }
-    grid.innerHTML = data.map(startup => `
-      <div class="stock-card" onclick="window.location.href='/startup.html?id=${startup._id}'" style="cursor: pointer;">
-        <div class="ticker" style="font-size: 1.2rem;">${startup.name || 'Unknown Startup'}</div>
-        <div class="name" style="margin-top: 5px;">Description: ${startup.description || 'N/A'}</div>
-        <div class="price" style="font-size: 0.9rem; margin-top: 8px;">Industry: ${startup.industry || 'N/A'}</div>
-        <div class="change positive" style="margin-top: 5px;">Stage: ${startup.stage || 'N/A'}</div>
-      </div>
-    `).join('');
+    if (stageFilter) {
+      stageFilter.innerHTML = '<option value="">All Stages</option>' + stages.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+    
+    renderStartups(allStartups);
   } catch (err) {
     grid.innerHTML = '<div class="empty-state glass-card" style="grid-column:1/-1;"><p>Could not load startups.</p></div>';
   }
 }
+
+function renderStartups(startupsToRender) {
+  const grid = document.getElementById('startups-grid');
+  if (!grid) return;
+  if (!startupsToRender || startupsToRender.length === 0) {
+    grid.innerHTML = '<div class="empty-state glass-card" style="grid-column:1/-1;"><p>No startups found matching your criteria.</p></div>';
+    return;
+  }
+  
+  grid.innerHTML = startupsToRender.map(startup => `
+    <div class="glass-card startup-card" onclick="window.location.href='/startup.html?id=${startup._id}'" style="cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; height: 100%; transition: transform 0.2s, border-color 0.2s; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;">
+      <div style="padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+          <div class="ticker" style="font-size: 1.3rem; font-weight: 800; color: #fff;">${startup.name || 'Unknown Startup'}</div>
+          <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(52, 211, 153, 0.3);">${startup.stage || 'N/A'}</span>
+        </div>
+        <div class="name" style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 15px;">${startup.description || 'No description provided.'}</div>
+      </div>
+      <div style="padding: 15px 20px; background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.05); border-radius: 0 0 12px 12px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: #94a3b8; font-size: 0.85rem; display: flex; align-items: center; gap: 5px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          ${startup.industry || 'N/A'}
+        </span>
+        <button class="btn btn-primary btn-sm" style="padding: 4px 12px; font-size: 0.8rem; background: linear-gradient(135deg, #6d4aff, #8b5cf6);">View Details →</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterStartups() {
+  const searchQuery = document.getElementById('startup-directory-search')?.value.toLowerCase() || '';
+  const industryFilter = document.getElementById('startup-industry-filter')?.value || '';
+  const stageFilter = document.getElementById('startup-stage-filter')?.value || '';
+  
+  const filtered = allStartups.filter(s => {
+    const matchesSearch = !searchQuery || (s.name && s.name.toLowerCase().includes(searchQuery)) || (s.description && s.description.toLowerCase().includes(searchQuery));
+    const matchesIndustry = !industryFilter || s.industry === industryFilter;
+    const matchesStage = !stageFilter || s.stage === stageFilter;
+    return matchesSearch && matchesIndustry && matchesStage;
+  });
+  
+  renderStartups(filtered);
+}
+
+// Add event listeners for startup filtering
+const startupSearchInput = document.getElementById('startup-directory-search');
+const startupIndustryFilter = document.getElementById('startup-industry-filter');
+const startupStageFilter = document.getElementById('startup-stage-filter');
+
+if (startupSearchInput) startupSearchInput.addEventListener('input', debounce(filterStartups, 300));
+if (startupIndustryFilter) startupIndustryFilter.addEventListener('change', filterStartups);
+if (startupStageFilter) startupStageFilter.addEventListener('change', filterStartups);
 
 // ---- Market Data ----
 async function loadMarket(trend, btnEl) {
@@ -234,22 +304,56 @@ const doSearch = debounce(async (query) => {
   try {
     const data = await apiGet(`/api/stocks/search?q=${encodeURIComponent(query)}`);
     const results = data.quotes || [];
+
+    // Search Mongo startups
+    let startupMatches = [];
+    try {
+        const startupsData = typeof allStartups !== 'undefined' && allStartups.length > 0 
+          ? allStartups 
+          : await apiGet('/api/startups');
+          
+        const lowerQ = query.toLowerCase();
+        startupMatches = startupsData.filter(s => 
+          (s.name && s.name.toLowerCase().includes(lowerQ)) || 
+          (s.description && s.description.toLowerCase().includes(lowerQ))
+        );
+    } catch(e) {
+      console.error("Failed to load startups for search", e);
+    }
+
+    const combinedHtml = [];
     
-    if (results.length === 0) {
+    startupMatches.slice(0, 3).forEach(s => {
+      combinedHtml.push(`
+        <div class="search-result-item" onclick="window.location.href='/startup.html?id=${s._id}'" style="border-left: 3px solid #10b981; background: rgba(16, 185, 129, 0.05);">
+          <div>
+            <div style="font-weight:700; color: #10b981; display: flex; align-items: center; gap: 6px;">${s.name} <span style="font-size: 0.6rem; background: rgba(16,185,129,0.2); color: #34d399; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(16,185,129,0.3); text-transform: uppercase; font-weight: 800;">STARTUP</span></div>
+            <div class="text-muted text-sm" style="margin-top: 3px;">${s.industry || 'Private Company'}</div>
+          </div>
+          <div class="text-muted text-sm">${s.stage || ''}</div>
+        </div>
+      `);
+    });
+
+    results.slice(0, 8).forEach(r => {
+      combinedHtml.push(`
+        <div class="search-result-item" onclick="window.location.href='/stock.html?ticker=${encodeURIComponent(r.symbol)}'">
+          <div>
+            <div style="font-weight:700;">${r.symbol}</div>
+            <div class="text-muted text-sm">${r.shortname || r.longname || ''}</div>
+          </div>
+          <div class="text-muted text-sm">${r.exchDisp || r.exchange || ''}</div>
+        </div>
+      `);
+    });
+    
+    if (combinedHtml.length === 0) {
       searchResults.innerHTML = `<div class="search-result-item"><span class="text-muted">No results found</span></div>`;
       searchResults.classList.add('active');
       return;
     }
 
-    searchResults.innerHTML = results.slice(0, 8).map(r => `
-      <div class="search-result-item" onclick="window.location.href='/stock.html?ticker=${encodeURIComponent(r.symbol)}'">
-        <div>
-          <div style="font-weight:700;">${r.symbol}</div>
-          <div class="text-muted text-sm">${r.shortname || r.longname || ''}</div>
-        </div>
-        <div class="text-muted text-sm">${r.exchDisp || r.exchange || ''}</div>
-      </div>
-    `).join('');
+    searchResults.innerHTML = combinedHtml.join('');
     searchResults.classList.add('active');
   } catch (err) {
     searchResults.innerHTML = `<div class="search-result-item"><span class="text-muted">Search failed</span></div>`;
