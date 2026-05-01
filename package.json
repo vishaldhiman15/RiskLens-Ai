@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node backend/server.js",
     "dev": "nodemon backend/server.js",
-    "install:python": ".venv\\Scripts\\pip.exe install -r python-ai\\requirements.txt",
-    "start:python": ".venv\\Scripts\\python.exe python-ai\\app.py",
+    "install:python": "python-ai/venv/bin/pip install -r python-ai/requirements.txt",
+    "start:python": "python-ai/venv/bin/python python-ai/app.py",
     "start:all": "concurrently \"npm run dev\" \"npm run start:python\"",
     "build:mac": "cd electron && npm run build"
   },
